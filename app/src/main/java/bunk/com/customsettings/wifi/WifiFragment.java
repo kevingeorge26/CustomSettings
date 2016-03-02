@@ -112,9 +112,13 @@ public class WifiFragment extends Fragment {
 
 
     private void saveWifiConfiguration(String wifiSSID, String profileName) {
+        final float scale = wifiFragmentView.getContext().getResources().getDisplayMetrics().density;
+        int pixels = (int) (150 * scale + 0.5f);
+
         LinearLayout savedWifiEntryContainer  = new LinearLayout(getActivity());
         savedWifiEntryContainer.setOrientation(LinearLayout.HORIZONTAL);
         TextView wifiTextView = new TextView(getActivity());
+        wifiTextView.setWidth(pixels);
         wifiTextView.setText(wifiSSID);
         savedWifiEntryContainer.addView(wifiTextView);
 
