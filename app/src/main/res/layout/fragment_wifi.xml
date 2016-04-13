@@ -6,6 +6,7 @@
     tools:context="bunk.com.customsettings.wifi.WifiFragment"
     xmlns:card_view="http://schemas.android.com/apk/res-auto">
 
+    <!-- Area to add wifi-->
     <android.support.v7.widget.CardView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -51,31 +52,33 @@
                     android:text="Add" />
             </LinearLayout>
         </LinearLayout>
-
     </android.support.v7.widget.CardView>
 
-    <ScrollView
+    <!--Area to show configured wifi-->
+    <android.support.v7.widget.CardView
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
-        <android.support.v7.widget.CardView
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        card_view:cardUseCompatPadding="true">
+        <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:paddingBottom="6dp"
-            card_view:cardUseCompatPadding="true">
-            <LinearLayout
+            android:layout_height="match_parent"
+            android:id="@+id/saved_wifi"
+            android:orientation="vertical">
+                <android.support.v7.widget.AppCompatTextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="48dp"
+                    android:text="Configured Wifi"
+                    style="@style/Base.TextAppearance.AppCompat.Subhead"
+                    android:gravity="center_vertical"
+                    android:paddingLeft="10dp"
+                    android:alpha=".54"/>
+            <android.support.v7.widget.RecyclerView
+                android:id="@+id/configured_wifi_recycle_view"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:id="@+id/saved_wifi"
-                android:orientation="vertical">
-                    <android.support.v7.widget.AppCompatTextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="48dp"
-                        android:text="Configured Wifi"
-                        style="@style/Base.TextAppearance.AppCompat.Subhead"
-                        android:gravity="center_vertical"
-                        android:paddingLeft="10dp"
-                        android:alpha=".54"/>
-            </LinearLayout>
-        </android.support.v7.widget.CardView>
-    </ScrollView>
+                android:layout_height="wrap_content"
+                />
+        </LinearLayout>
+    </android.support.v7.widget.CardView>
+
 </LinearLayout>

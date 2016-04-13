@@ -2,12 +2,17 @@ package bunk.com.customsettings.wifi;
 
 import android.app.Activity;
 import android.content.Context;
+import android.graphics.Color;
 import android.net.Uri;
 import android.net.wifi.WifiConfiguration;
 import android.net.wifi.WifiManager;
 import android.os.Bundle;
+import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.AppCompatSpinner;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -26,14 +31,16 @@ import java.util.List;
 
 import bunk.com.customsettings.R;
 
-public class WifiFragment extends Fragment {
+public class WifiFragment extends Fragment implements ConfiguredWifiAdapter.WifiDeleteListener {
 
     private View wifiFragmentView;
+    private static final String LOG_PREFIX = "CUSTOMSETTINGS_WFIFI";
     private static List<String> availableWifiSSID;
     private static List<String> profileNameList = Arrays.asList("Silent", "Viberate", "Normal");
     private static ArrayAdapter<String> availableWifiListAdapter, availableSoundProfilesAdapter;
-    public static HashMap<String, String> configuredWifiList = new HashMap<>();
+    private static List<ConfiguredWifiAdapter.ConfiguredWifiModel> mList = new ArrayList<>();
 
+    ConfiguredWifiAdapter adapterConfiguredWifi;
     public WifiFragment() {
         // Required empty public constructor
     }
@@ -43,6 +50,12 @@ public class WifiFragment extends Fragment {
         Bundle args = new Bundle();
         fragment.setArguments(args);
         return fragment;
+    }
+
+    public void deleteWifiConfiguration(int position) {
+        mList.remove(position);
+        adapterConfiguredWifi.notifyItemRemoved(position);
+        notifyWifiAddRemove();
     }
 
     @Override
@@ -56,7 +69,11 @@ public class WifiFragment extends Fragment {
                              Bundle savedInstanceState) {
         wifiFragmentView = inflater.inflate(R.layout.fragment_wifi, container, false);
         getAvailableWIfi();
-        createUITOAddWifi(wifiFragmentView);
+
+        RecyclerView rvWifi = (RecyclerView) wifiFragmentView.findViewById(R.id.configured_wifi_recycle_view);
+        adapterConfiguredWifi = new ConfiguredWifiAdapter(mList, this);
+        rvWifi.setAdapter(adapterConfiguredWifi);
+        rvWifi.setLayoutManager(new LinearLayoutManager(getActivity()));
         return wifiFragmentView;
     }
 
@@ -74,21 +91,59 @@ public class WifiFragment extends Fragment {
 
     private void getAvailableWIfi() {
         WifiManager wifiManager = (WifiManager) getActivity().getSystemService(Context.WIFI_SERVICE);
-        List<WifiConfiguration> configuredNetworks = wifiManager.getConfiguredNetworks();
-        availableWifiSSID = new ArrayList<String>();
-        for(WifiConfiguration wifi: configuredNetworks) {
-            availableWifiSSID.add(wifi.SSID.replaceAll("\"", ""));
+
+        if (!wifiManager.isWifiEnabled()) {
+            Log.e(LOG_PREFIX, wifiFragmentView.toString());
+//            Snackbar snackbar = Snackbar.make(wifiFragmentView, "Please enable wifi", Snackbar.LENGTH_SHORT);
+//            snackbar.show();
+        } else {
+            List<WifiConfiguration> configuredNetworks = wifiManager.getConfiguredNetworks();
+            availableWifiSSID = new ArrayList<String>();
+            for (WifiConfiguration wifi : configuredNetworks) {
+                availableWifiSSID.add(wifi.SSID.replaceAll("\"", ""));
+            }
+            createUITOAddWifi(wifiFragmentView);
         }
     }
 
     private void createUITOAddWifi(View wifiFragmentView) {
         availableWifiListAdapter = new ArrayAdapter<String>(getActivity(),
                 android.R.layout.simple_spinner_item,
-                availableWifiSSID);
+                availableWifiSSID) {
+            @Override
+            public boolean isEnabled(int position) {
+                String wifiSSID = availableWifiSSID.get(position);
+                for(ConfiguredWifiAdapter.ConfiguredWifiModel model: mList) {
+                    if(model.getWifiName().equals(wifiSSID)) {
+                        return false;
+                    }
+                }
+                return true;
+            }
+
+            @Override
+            public View getDropDownView(int position, View convertView, ViewGroup parent) {
+                TextView view = (TextView) super.getDropDownView(position, convertView, parent);
+                String wifiSSID = availableWifiSSID.get(position);
+                for(ConfiguredWifiAdapter.ConfiguredWifiModel model: mList) {
+                    if(model.getWifiName().equals(wifiSSID)) {
+                        view.setTextColor(Color.GRAY);
+                    } else {
+                        view.setTextColor(Color.BLACK);
+                    }
+                }
+
+                return view;
+
+
+            }
+        };
+        availableWifiListAdapter.setDropDownViewResource(R.layout.spinner_dropdown);
 
         availableSoundProfilesAdapter = new ArrayAdapter<String>(getActivity(),
                 android.R.layout.simple_spinner_item,
                 profileNameList);
+        availableSoundProfilesAdapter.setDropDownViewResource(R.layout.spinner_dropdown);
 
         final Spinner wifiSpinner = (Spinner) wifiFragmentView.findViewById(R.id.add_wifi_spinner);
         wifiSpinner.setAdapter(availableWifiListAdapter);
@@ -109,44 +164,17 @@ public class WifiFragment extends Fragment {
         });
     }
 
-
+    // call this function enable/disable wifi names in the add section
+    private static void notifyWifiAddRemove() {
+        availableWifiListAdapter.notifyDataSetChanged();
+    }
 
     private void saveWifiConfiguration(String wifiSSID, String profileName) {
-        final float scale = wifiFragmentView.getContext().getResources().getDisplayMetrics().density;
-        int pixels = (int) (150 * scale + 0.5f);
-
-        LinearLayout savedWifiEntryContainer  = new LinearLayout(getActivity());
-        savedWifiEntryContainer.setOrientation(LinearLayout.HORIZONTAL);
-        TextView wifiTextView = new TextView(getActivity());
-        wifiTextView.setWidth(pixels);
-        wifiTextView.setText(wifiSSID);
-        savedWifiEntryContainer.addView(wifiTextView);
-
-        TextView profileTextView = new TextView(getActivity());
-        profileTextView.setText(profileName);
-        savedWifiEntryContainer.addView(profileTextView);
-
-        Button removeWifiButton = new Button(getActivity());
-        removeWifiButton.setText("Delete");
-        removeWifiButton.setOnClickListener(new View.OnClickListener(){
-            private String deletedWifiSSID;
-
-            @Override
-            public void onClick(View v) {
-                configuredWifiList.remove(this.deletedWifiSSID);
-                LinearLayout deleteLayout = (LinearLayout) v.getParent();
-                ((ViewGroup) deleteLayout.getParent()).removeView(deleteLayout);
-            }
-
-            public View.OnClickListener init(String wifiSSID) {
-                this.deletedWifiSSID = wifiSSID;
-                return this;
-            }
-        }.init(wifiSSID));
-        savedWifiEntryContainer.addView(removeWifiButton);
-
-        LinearLayout configuredWIfiContainer = (LinearLayout) wifiFragmentView.findViewById(R.id.saved_wifi);
-        configuredWIfiContainer.addView(savedWifiEntryContainer);
+        int start = mList.size();
+        ConfiguredWifiAdapter.ConfiguredWifiModel model = new ConfiguredWifiAdapter.ConfiguredWifiModel(wifiSSID, profileName);
+        mList.add(model);
+        adapterConfiguredWifi.notifyItemRangeInserted(start, 1);
+        notifyWifiAddRemove();
     }
 
 
