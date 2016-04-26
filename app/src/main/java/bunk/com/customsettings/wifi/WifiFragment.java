@@ -94,8 +94,8 @@ public class WifiFragment extends Fragment implements ConfiguredWifiAdapter.Wifi
 
         if (!wifiManager.isWifiEnabled()) {
             Log.e(LOG_PREFIX, wifiFragmentView.toString());
-//            Snackbar snackbar = Snackbar.make(wifiFragmentView, "Please enable wifi", Snackbar.LENGTH_SHORT);
-//            snackbar.show();
+            Snackbar snackbar = Snackbar.make(wifiFragmentView, "Please enable wifi", Snackbar.LENGTH_INDEFINITE);
+            snackbar.show();
         } else {
             List<WifiConfiguration> configuredNetworks = wifiManager.getConfiguredNetworks();
             availableWifiSSID = new ArrayList<String>();
