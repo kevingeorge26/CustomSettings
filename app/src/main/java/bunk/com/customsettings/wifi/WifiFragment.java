@@ -24,6 +24,16 @@ import android.widget.ScrollView;
 import android.widget.Spinner;
 import android.widget.TextView;
 
+
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.Reader;
+import java.io.Writer;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -34,11 +44,11 @@ import bunk.com.customsettings.R;
 public class WifiFragment extends Fragment implements ConfiguredWifiAdapter.WifiDeleteListener {
 
     private View wifiFragmentView;
-    private static final String LOG_PREFIX = "CUSTOMSETTINGS_WFIFI";
+    public static final String LOG_PREFIX = "CUSTOMSETTINGS_WIFI", WIFI_CONFIG = "wifi.conf", TERM_SEPRATOR = Character.toString((char)29);
     private static List<String> availableWifiSSID;
-    private static List<String> profileNameList = Arrays.asList("Silent", "Viberate", "Normal");
+    private static List<String> profileNameList;
     private static ArrayAdapter<String> availableWifiListAdapter, availableSoundProfilesAdapter;
-    private static List<ConfiguredWifiAdapter.ConfiguredWifiModel> mList = new ArrayList<>();
+    public static List<ConfiguredWifiAdapter.ConfiguredWifiModel> mList = new ArrayList<>();
 
     ConfiguredWifiAdapter adapterConfiguredWifi;
     public WifiFragment() {
@@ -65,15 +75,56 @@ public class WifiFragment extends Fragment implements ConfiguredWifiAdapter.Wifi
     }
 
     @Override
+    public void onPause() {
+        super.onPause();
+
+
+        // save configured wifi to file
+        Context context = wifiFragmentView.getContext();
+        File file = new File(context.getFilesDir(), WIFI_CONFIG);
+        try {
+            BufferedWriter writer =  new BufferedWriter(new FileWriter(file));
+            for(ConfiguredWifiAdapter.ConfiguredWifiModel model: mList) {
+                writer.write(model.getWifiName() + TERM_SEPRATOR + model.getProfileName());
+                writer.newLine();
+            }
+            writer.close();
+        } catch (IOException e) {
+            Log.e(LOG_PREFIX, e.getStackTrace().toString());
+        }
+
+    }
+
+    @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
+        profileNameList = Arrays.asList(getString(R.string.dnd), getString(R.string.vibrate), getString(R.string.normal));
         wifiFragmentView = inflater.inflate(R.layout.fragment_wifi, container, false);
-        getAvailableWIfi();
 
+        getAvailableWIfi();
         RecyclerView rvWifi = (RecyclerView) wifiFragmentView.findViewById(R.id.configured_wifi_recycle_view);
         adapterConfiguredWifi = new ConfiguredWifiAdapter(mList, this);
         rvWifi.setAdapter(adapterConfiguredWifi);
         rvWifi.setLayoutManager(new LinearLayoutManager(getActivity()));
+        Context context = wifiFragmentView.getContext();
+
+        // populate previously saved config
+        File file = new File(context.getFilesDir(), WIFI_CONFIG);
+        try {
+            BufferedReader reader = new BufferedReader(new FileReader(file));
+            String line;
+            while((line = reader.readLine()) != null) {
+                String[] temp = line.split(TERM_SEPRATOR);
+                ConfiguredWifiAdapter.ConfiguredWifiModel model = new ConfiguredWifiAdapter.ConfiguredWifiModel(temp[0], temp[1]);
+                mList.add(model);
+            }
+            reader.close();
+            adapterConfiguredWifi.notifyDataSetChanged();
+
+        } catch (IOException e) {
+
+        }
+
         return wifiFragmentView;
     }
 
@@ -93,7 +144,6 @@ public class WifiFragment extends Fragment implements ConfiguredWifiAdapter.Wifi
         WifiManager wifiManager = (WifiManager) getActivity().getSystemService(Context.WIFI_SERVICE);
 
         if (!wifiManager.isWifiEnabled()) {
-            Log.e(LOG_PREFIX, wifiFragmentView.toString());
             Snackbar snackbar = Snackbar.make(wifiFragmentView, "Please enable wifi", Snackbar.LENGTH_INDEFINITE);
             snackbar.show();
         } else {
@@ -107,6 +157,7 @@ public class WifiFragment extends Fragment implements ConfiguredWifiAdapter.Wifi
     }
 
     private void createUITOAddWifi(View wifiFragmentView) {
+        final View fragmentView = wifiFragmentView;
         availableWifiListAdapter = new ArrayAdapter<String>(getActivity(),
                 android.R.layout.simple_spinner_item,
                 availableWifiSSID) {
@@ -157,9 +208,22 @@ public class WifiFragment extends Fragment implements ConfiguredWifiAdapter.Wifi
             public void onClick(View v) {
                 String selectedWifi;
                 selectedWifi = wifiSpinner.getSelectedItem().toString();
-                String selectedProfile;
-                selectedProfile = profileSpinner.getSelectedItem().toString();
-                saveWifiConfiguration(selectedWifi, selectedProfile);
+
+                boolean newWifiSetting = true;
+                for(ConfiguredWifiAdapter.ConfiguredWifiModel model: mList) {
+                    if(model.getWifiName().equals(selectedWifi)) {
+                        newWifiSetting = false;
+                    }
+                }
+
+                if (newWifiSetting) {
+                    String selectedProfile;
+                    selectedProfile = profileSpinner.getSelectedItem().toString();
+                    saveWifiConfiguration(selectedWifi, selectedProfile);
+                } else {
+                    Snackbar snackbar = Snackbar.make(fragmentView, "Wifi already configured", Snackbar.LENGTH_SHORT);
+                    snackbar.show();
+                }
             }
         });
     }
