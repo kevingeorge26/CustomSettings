@@ -30,10 +30,10 @@
                 <android.support.v7.widget.AppCompatTextView
                     android:layout_width="wrap_content"
                     android:layout_height="48dp"
-                    android:text="Add Wifi"
+                    android:text="Add Wifi Sound "
                     style="@style/Base.TextAppearance.AppCompat.Subhead"
                     android:gravity="center_vertical"
-                    android:paddingLeft="10dp"
+                    android:paddingLeft="12dp"
                     android:alpha=".54"/>
 
                 <LinearLayout

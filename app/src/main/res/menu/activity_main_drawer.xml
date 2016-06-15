@@ -4,8 +4,8 @@
     <group android:checkableBehavior="single">
         <item
             android:id="@+id/nav_wifi"
-            android:icon="@drawable/ic_menu_camera"
-            android:title="Wifi" />
+            android:icon="@drawable/ic_network_wifi_black"
+            android:title="@string/wifi_sound_settings" />
         <item
             android:id="@+id/nav_general"
             android:icon="@drawable/ic_menu_gallery"

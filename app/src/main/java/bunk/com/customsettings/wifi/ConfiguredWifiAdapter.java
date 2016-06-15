@@ -6,6 +6,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.ImageButton;
 import android.widget.TextView;
 
 import java.util.List;
@@ -56,13 +57,13 @@ public class ConfiguredWifiAdapter extends RecyclerView.Adapter<ConfiguredWifiAd
 
     public class ViewHolder extends RecyclerView.ViewHolder {
         TextView wifiNameView, profileNameView;
-        Button deleteButton;
+        ImageButton deleteButton;
 
         public ViewHolder(View itemView) {
             super(itemView);
             wifiNameView = (TextView) itemView.findViewById(R.id.configured_wifi_name);
             profileNameView = (TextView) itemView.findViewById(R.id.configured_profile_name);
-            deleteButton = (Button) itemView.findViewById(R.id.wifi_delete_button);
+            deleteButton = (ImageButton) itemView.findViewById(R.id.wifi_delete_button);
             deleteButton.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
