@@ -14,7 +14,7 @@ import java.util.List;
 public class WifiDetailsModel implements Serializable{
 
     public static final int NOT_CONFIGURED = 0, ENABLE = 1, DISABLE = 2;
-    public static final int SOUND_LOUD = 3, SOUND_SILIENT = 4, SOUND_DND = 5;
+    public static final int SOUND_LOUD = 3, SOUND_SILENT = 4, SOUND_DND = 5;
 
     public String wifiName;
     public int bluetoothStatus, soundProfileStatus, unlockStatus;
@@ -44,14 +44,14 @@ public class WifiDetailsModel implements Serializable{
         return availableWifi;
     }
 
-    public static void addNewWifi(WifiDetailsModel model, SQLiteDatabase writeDB){
+    public static void addOrUpdateWifi(WifiDetailsModel model, SQLiteDatabase writeDB){
         ContentValues contentValues = new ContentValues();
         contentValues.put(DBTablesContract.WifiProfile.COLUMN_NAME_WIFI_NAME, model.wifiName);
         contentValues.put(DBTablesContract.WifiProfile.COLUMN_NAME_BLUETOOTH_SETTING, model.bluetoothStatus);
         contentValues.put(DBTablesContract.WifiProfile.COLUMN_NAME_SOUND_SETTING, model.soundProfileStatus);
         contentValues.put(DBTablesContract.WifiProfile.COLUMN_NAME_UNLOCK_SETTING, model.unlockStatus);
 
-        writeDB.insert(DBTablesContract.WifiProfile.TABLE_NAME, null, contentValues);
-
+        writeDB.insertWithOnConflict(DBTablesContract.WifiProfile.TABLE_NAME, null, contentValues, SQLiteDatabase.CONFLICT_REPLACE);
     }
+
 }

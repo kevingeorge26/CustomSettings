@@ -2,7 +2,6 @@ package bunk.com.customsettings.AdvancedWifi;
 
 import android.app.Activity;
 import android.content.Intent;
-import android.net.Uri;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
@@ -10,15 +9,15 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.transition.TransitionManager;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.LinearLayout;
 
 import java.util.ArrayList;
 import java.util.List;
 
+import bunk.com.customsettings.Helpers.DividerItemDecoration;
 import bunk.com.customsettings.Helpers.Utils;
 import bunk.com.customsettings.R;
 
@@ -26,12 +25,14 @@ import bunk.com.customsettings.R;
 public class AdvancedWifiFragment extends Fragment implements ConfiguredWifiAdapter.ConfiguredWifiAdapterListener{
 
 
-    private OnFragmentInteractionListener mListener;
     private View mView;
-    private FragmentActivity activity;
+    FragmentActivity activity;
     private DBHelper mDbHelper;
-    List<String> availableWifi;
+
+    List<String> mAvailableWifi;
     List<WifiDetailsModel> mConfiguredWifi;
+    ConfiguredWifiAdapter mConfiguredWifiAdapter;
+
 
     public AdvancedWifiFragment() {
         // Required empty public constructor
@@ -58,8 +59,8 @@ public class AdvancedWifiFragment extends Fragment implements ConfiguredWifiAdap
         mView =  inflater.inflate(R.layout.fragment_advanced_wifi, container, false);
         activity = getActivity();
 
-        availableWifi = Utils.getAvailableWifi(activity);
-        if (availableWifi == null) {
+        mAvailableWifi = Utils.getAvailableWifi(activity);
+        if (mAvailableWifi == null) {
             Snackbar snackbar = Snackbar.make(mView, "Please enable wifi to Edit settings", Snackbar.LENGTH_INDEFINITE);
             snackbar.show();
         }
@@ -73,14 +74,16 @@ public class AdvancedWifiFragment extends Fragment implements ConfiguredWifiAdap
 
         RecyclerView recyclerView = (RecyclerView) mView.findViewById(R.id.configured_wifi);
         recyclerView.setLayoutManager(new LinearLayoutManager(activity));
-        recyclerView.setAdapter(new ConfiguredWifiAdapter(activity, mConfiguredWifi, this));
+        recyclerView.addItemDecoration(new DividerItemDecoration(activity, LinearLayoutManager.VERTICAL));
+        mConfiguredWifiAdapter = new ConfiguredWifiAdapter(activity, mConfiguredWifi, this);
+        recyclerView.setAdapter(mConfiguredWifiAdapter);
 
         FloatingActionButton fab = (FloatingActionButton) mView.findViewById(R.id.fab_button);
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(activity, WifiDetailsActivity.class);
-                intent.putStringArrayListExtra(WifiDetailsActivity.WIFI_AVAILABILITY_ARG, (ArrayList<String>) availableWifi);
+                intent.putStringArrayListExtra(WifiDetailsActivity.WIFI_AVAILABILITY_ARG, (ArrayList<String>) mAvailableWifi);
                 startActivity(intent);
             }
         });
@@ -96,19 +99,29 @@ public class AdvancedWifiFragment extends Fragment implements ConfiguredWifiAdap
     }
 
     @Override
+    public void onResume() {
+        List<WifiDetailsModel> temp = WifiDetailsModel.getAllConfiguredWifi(mDbHelper.getReadableDatabase());
+        if (temp != null) {
+            mConfiguredWifi.clear();
+            mConfiguredWifi.addAll(0, temp);
+            mConfiguredWifiAdapter.notifyDataSetChanged();
+        }
+        super.onResume();
+    }
+
+
+    @Override
     public void onDetach() {
         super.onDetach();
-        mListener = null;
     }
 
     @Override
     public void onWifiClick(int position) {
+        Intent intent = new Intent(activity, WifiDetailsActivity.class);
+        intent.addFlags(Intent.FLAG_ACTIVITY_NO_HISTORY);
+        intent.putExtra(WifiDetailsActivity.WIFI_DETAILS_ARG, mConfiguredWifi.get(position));
+        startActivity(intent);
 
     }
 
-
-    public interface OnFragmentInteractionListener {
-        // TODO: Update argument type and name
-        void onFragmentInteraction(Uri uri);
-    }
 }

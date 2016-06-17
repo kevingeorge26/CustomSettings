@@ -31,8 +31,11 @@
             </intent-filter>
         </receiver>
 
-        <activity android:name=".AdvancedWifi.AdvancedWifiActivity" />
-        <activity android:name=".AdvancedWifi.WifiDetailsActivity"></activity>
+        <activity android:name=".AdvancedWifi.WifiDetailsActivity"
+            android:parentActivityName=".MainActivity">
+            <meta-data android:name="android.support.PARENT_ACTIVITY"
+                android:value=".MainActivity" />
+        </activity>
     </application>
 
 </manifest>

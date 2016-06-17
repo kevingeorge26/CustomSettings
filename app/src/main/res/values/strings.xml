@@ -7,7 +7,7 @@
     <string name="action_settings">Settings</string>
 
     <!--Main Menu Options-->
-    <string name="wifi_sound_settings">Wifi Sound Profile</string>
+    <string name="wifi_sound_settings">Wifi Based Settings</string>
 
     <!--Audio Profiles-->
     <string name="dnd">DND</string>

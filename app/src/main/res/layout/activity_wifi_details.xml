@@ -1,167 +1,239 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<android.support.design.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/root_view"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    android:paddingBottom="@dimen/activity_vertical_margin"
-    android:paddingLeft="@dimen/activity_horizontal_margin"
-    android:paddingRight="@dimen/activity_horizontal_margin"
-    android:paddingTop="@dimen/activity_vertical_margin"
     tools:context="bunk.com.customsettings.AdvancedWifi.WifiDetailsActivity"
     android:weightSum="1">
 
-    <Spinner
-        android:id="@+id/available_wifi_spinner"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="24dp"
-        android:layout_marginBottom="24dp">
-    </Spinner>
-
-
-    <RelativeLayout
+    <ScrollView
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="match_parent"
+        android:fillViewport="true">
 
-        <TextView
-            android:id="@+id/sound_profile_text"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Sound Profile"
-            android:textSize="20sp"
-            android:layout_alignParentLeft="true"/>
-
-        <Switch
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:id="@+id/sound_switch"
-            android:layout_alignParentRight="true" />
-
-        <LinearLayout
-            android:id="@+id/sound_options"
-            android:layout_width="match_parent"
-            android:layout_height="0dp"
-            android:orientation="vertical"
-            android:layout_below="@+id/sound_profile_text"
-            android:layout_marginTop="8dp"
-            android:layout_marginLeft="8dp"
-            android:visibility="gone">
-            <RadioGroup
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content">
-
-                <RadioButton
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Loud"/>
-
-                <RadioButton
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Viberate"/>
-
-                <RadioButton
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Alarms Only"/>
-
-            </RadioGroup>
-        </LinearLayout>
-    </RelativeLayout>
-
-
-    <RelativeLayout
+    <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="16dp">
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:paddingBottom="@dimen/activity_vertical_margin"
+        android:paddingLeft="@dimen/activity_horizontal_margin"
+        android:paddingRight="@dimen/activity_horizontal_margin"
+        android:paddingTop="@dimen/activity_vertical_margin">
 
-        <TextView
-            android:id="@+id/bluetooth_profile_text"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Bluetooth Profile"
-            android:textSize="20sp"
-            android:layout_alignParentLeft="true"/>
-
-        <Switch
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:id="@+id/bluetooth_switch"
-            android:layout_alignParentRight="true" />
-
-        <LinearLayout
-            android:id="@+id/bluetooth_options"
+        <Spinner
+            android:id="@+id/available_wifi_spinner"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="vertical"
-            android:layout_below="@+id/bluetooth_profile_text"
-            android:layout_marginTop="8dp"
-            android:layout_marginLeft="8dp">
-            <RadioGroup
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content">
+            android:layout_marginTop="24dp"
+            android:layout_marginBottom="24dp">
+        </Spinner>
 
-                <RadioButton
-                    android:layout_width="wrap_content"
+
+            <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+                <LinearLayout
+                    android:id="@+id/sound_switch_holder"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="Switch On"/>
+                    android:orientation="horizontal"
+                    android:layout_alignParentLeft="true"
+                    android:paddingTop="4dp"
+                    android:paddingBottom="4dp"
+                    android:background="?attr/selectableItemBackground"
+                    android:tag="switch_holder"
+                    android:clickable="true"
+                    android:onClick="triggerSwitchOperation">
 
-                <RadioButton
-                    android:layout_width="wrap_content"
+                    <TextView
+                        android:id="@+id/sound_profile_text"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Notification Setting"
+                        android:textSize="20sp"
+                        android:layout_weight="1"
+
+                        />
+
+                    <Switch
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:id="@+id/sound_switch"
+                        android:tag="switch"
+                        android:layout_alignParentRight="true" />
+                </LinearLayout>
+
+                <LinearLayout
+                    android:id="@+id/sound_options"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="Switch Off"/>
+                    android:orientation="vertical"
+                    android:layout_below="@+id/sound_switch_holder"
+                    android:layout_marginTop="8dp"
+                    android:layout_marginLeft="8dp"
+                    android:visibility="gone">
+                    <RadioGroup
+                        android:id="@+id/sound_radio_group"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content">
 
-            </RadioGroup>
-        </LinearLayout>
-    </RelativeLayout>
+                        <RadioButton
+                            android:id="@+id/sound_loud"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Loud"/>
+
+                        <RadioButton
+                            android:id="@+id/sound_vibrate"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Vibrate"/>
+
+                        <RadioButton
+                            android:id="@+id/sound_alarms"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Alarms Only"/>
+                    </RadioGroup>
+                </LinearLayout>
+        </RelativeLayout>
 
 
-
-    <RelativeLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="16dp">
-
-        <TextView
-            android:id="@+id/lock_profile_text"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Lock Profile"
-            android:textSize="20sp"
-            android:layout_alignParentLeft="true"/>
-
-        <Switch
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:id="@+id/lock_switch"
-            android:layout_alignParentRight="true" />
-
-        <LinearLayout
-            android:id="@+id/lock_options"
+        <RelativeLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="vertical"
-            android:layout_below="@+id/lock_profile_text"
-            android:layout_marginTop="8dp"
-            android:layout_marginLeft="8dp">
-            <RadioGroup
+            android:layout_marginTop="16dp">
+
+            <LinearLayout
+                android:id="@+id/bluetooth_switch_holder"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content">
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:layout_alignParentLeft="true"
+                android:paddingTop="4dp"
+                android:paddingBottom="4dp"
+                android:background="?attr/selectableItemBackground"
+                android:tag="switch_holder"
+                android:clickable="true"
+                android:onClick="triggerSwitchOperation">
 
-                <RadioButton
+                <TextView
+                    android:id="@+id/bluetooth_profile_text"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Switch On"/>
+                    android:text="Bluetooth"
+                    android:textSize="20sp"
+                    android:layout_weight="1"/>
 
-                <RadioButton
+                <Switch
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Switch Off"/>
+                    android:id="@+id/bluetooth_switch"
+                    android:layout_alignParentRight="true"
+                    android:tag="switch"/>
 
-            </RadioGroup>
-        </LinearLayout>
-    </RelativeLayout>
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/bluetooth_options"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:layout_below="@+id/bluetooth_switch_holder"
+                android:layout_marginTop="8dp"
+                android:layout_marginLeft="8dp"
+                android:visibility="gone">
+                <RadioGroup
+                    android:id="@+id/bluetooth_radio_group"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+
+                    <RadioButton
+                        android:id="@+id/bluetooth_enable"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Turn On"/>
+
+                    <RadioButton
+                        android:id="@+id/bluetooth_disable"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Turn Off"/>
+
+                </RadioGroup>
+            </LinearLayout>
+        </RelativeLayout>
 
 
-</LinearLayout>
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp">
+
+            <LinearLayout
+                android:id="@+id/lock_switch_holder"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:layout_alignParentLeft="true"
+                android:paddingTop="4dp"
+                android:paddingBottom="4dp"
+                android:background="?attr/selectableItemBackground"
+                android:tag="switch_holder"
+                android:clickable="true"
+                android:onClick="triggerSwitchOperation">
+
+                <TextView
+                    android:id="@+id/lock_profile_text"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Lock Screen"
+                    android:textSize="20sp"
+                    android:layout_weight="1"/>
+
+                <Switch
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/lock_switch"
+                    android:layout_alignParentRight="true"
+                    android:tag="switch"/>
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/lock_options"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:layout_below="@+id/lock_switch_holder"
+                android:layout_marginTop="8dp"
+                android:layout_marginLeft="8dp"
+                android:visibility="gone">
+                <RadioGroup
+                    android:id="@+id/lock_radio_group"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+
+                    <RadioButton
+                        android:id="@+id/lock_enable"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Lock Screen"/>
+
+                    <RadioButton
+                        android:id="@+id/lock_disable"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Unlock Screen"/>
+
+                </RadioGroup>
+            </LinearLayout>
+        </RelativeLayout>
+    </LinearLayout>
+
+</ScrollView>
+</android.support.design.widget.CoordinatorLayout>

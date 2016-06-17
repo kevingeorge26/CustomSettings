@@ -1,7 +1,6 @@
 package bunk.com.customsettings.AdvancedWifi;
 
 import android.content.Context;
-import android.support.v7.widget.LinearLayoutCompat;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -48,19 +47,19 @@ public class ConfiguredWifiAdapter extends RecyclerView.Adapter<ConfiguredWifiAd
         holder.position = position;
         holder.wifiName.setText(wifiDetails.wifiName);
         // set the activated icons
-
+        holder.settingsIndicatorLayout.removeAllViews();
         int imageType = 0;
         if (wifiDetails.soundProfileStatus !=  WifiDetailsModel.NOT_CONFIGURED) {
 
             switch (wifiDetails.soundProfileStatus) {
-                case WifiDetailsModel.SOUND_SILIENT:
-                    imageType = android.R.drawable.ic_lock_silent_mode;
+                case WifiDetailsModel.SOUND_SILENT:
+                    imageType = R.drawable.ic_volume_mute_black_24dp;
                     break;
                 case WifiDetailsModel.SOUND_LOUD:
-                    imageType = android.R.drawable.ic_lock_silent_mode_off;
+                    imageType = R.drawable.ic_volume_up_black_24dp;
                     break;
                 case WifiDetailsModel.SOUND_DND:
-                    imageType = android.R.drawable.ic_lock_idle_alarm;
+                    imageType = R.drawable.ic_remove_circle_black_24dp;
                     break;
             }
 
@@ -105,6 +104,7 @@ public class ConfiguredWifiAdapter extends RecyclerView.Adapter<ConfiguredWifiAd
     private void addSettingsIcon(int imageType, LinearLayout holder) {
         ImageView icon = new ImageView(mContext);
         icon.setImageResource(imageType);
+        icon.setPadding(4, 0 , 4 , 0);
         icon.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT,
                 LinearLayout.LayoutParams.WRAP_CONTENT));
 
