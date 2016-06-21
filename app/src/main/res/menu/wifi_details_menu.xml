@@ -6,4 +6,8 @@
         android:orderInCategory="100"
         android:title="Save"
         app:showAsAction="ifRoom" />
+    <item
+        android:id="@+id/delete_settings"
+        app:showAsAction="collapseActionView"
+        android:title="Delete"/>
 </menu>

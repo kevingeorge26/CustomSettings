@@ -44,7 +44,7 @@ public class WifiDetailsModel implements Serializable{
         return availableWifi;
     }
 
-    public static void addOrUpdateWifi(WifiDetailsModel model, SQLiteDatabase writeDB){
+        public static void addOrUpdateWifi(WifiDetailsModel model, SQLiteDatabase writeDB){
         ContentValues contentValues = new ContentValues();
         contentValues.put(DBTablesContract.WifiProfile.COLUMN_NAME_WIFI_NAME, model.wifiName);
         contentValues.put(DBTablesContract.WifiProfile.COLUMN_NAME_BLUETOOTH_SETTING, model.bluetoothStatus);
@@ -54,4 +54,36 @@ public class WifiDetailsModel implements Serializable{
         writeDB.insertWithOnConflict(DBTablesContract.WifiProfile.TABLE_NAME, null, contentValues, SQLiteDatabase.CONFLICT_REPLACE);
     }
 
+    public static WifiDetailsModel getWifiDetails(String wifiName, SQLiteDatabase readDB){
+        String[] params = new String[]{ wifiName };
+        Cursor cursor = readDB.query(DBTablesContract.WifiProfile.TABLE_NAME, null,
+                        DBTablesContract.WifiProfile.COLUMN_NAME_WIFI_NAME + " = ?", params,
+                        null, null, null);
+
+        WifiDetailsModel model = null;
+        if (cursor.moveToFirst()) {
+            model = new WifiDetailsModel();
+            model.wifiName = cursor.getString(cursor.getColumnIndex(DBTablesContract.WifiProfile.COLUMN_NAME_WIFI_NAME));
+            model.soundProfileStatus = cursor.getInt(cursor.getColumnIndex(DBTablesContract.WifiProfile.COLUMN_NAME_SOUND_SETTING));
+            model.bluetoothStatus = cursor.getInt(cursor.getColumnIndex(DBTablesContract.WifiProfile.COLUMN_NAME_BLUETOOTH_SETTING));
+            model.unlockStatus = cursor.getInt(cursor.getColumnIndex(DBTablesContract.WifiProfile.COLUMN_NAME_UNLOCK_SETTING));
+        }
+
+        return  model;
+    }
+
+    public static void deleteWifi(String wifiName, SQLiteDatabase writeDB) {
+
+        writeDB.delete(DBTablesContract.WifiProfile.TABLE_NAME, DBTablesContract.WifiProfile.COLUMN_NAME_WIFI_NAME + "=\"" + wifiName +"\"", null);
+    }
+
+    @Override
+    public String toString() {
+        return "WifiDetailsModel{" +
+                "wifiName='" + wifiName + '\'' +
+                ", bluetoothStatus=" + bluetoothStatus +
+                ", soundProfileStatus=" + soundProfileStatus +
+                ", unlockStatus=" + unlockStatus +
+                '}';
+    }
 }

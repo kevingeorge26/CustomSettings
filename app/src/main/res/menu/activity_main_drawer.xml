@@ -2,22 +2,18 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
 
     <group android:checkableBehavior="single">
+        <!--<item-->
+            <!--android:id="@+id/nav_wifi"-->
+            <!--android:icon="@drawable/ic_network_wifi_black"-->
+            <!--android:title="@string/wifi_sound_settings" />-->
         <item
-            android:id="@+id/nav_wifi"
-            android:icon="@drawable/ic_network_wifi_black"
-            android:title="@string/wifi_sound_settings" />
-        <item
-            android:id="@+id/nav_general"
+            android:id="@+id/nav_advanced_wifi"
             android:icon="@drawable/ic_menu_gallery"
-            android:title="General" />
+            android:title="Wifi Based Settings" />
         <item
-            android:id="@+id/nav_slideshow"
+            android:id="@+id/nav_default_wifi"
             android:icon="@drawable/ic_menu_slideshow"
-            android:title="Placeholder1" />
-        <item
-            android:id="@+id/nav_manage"
-            android:icon="@drawable/ic_menu_manage"
-            android:title="Placeholder2" />
+            android:title="Default Settings" />
     </group>
 
     <item android:title="Contact">
@@ -27,9 +23,9 @@
                 android:icon="@drawable/ic_menu_share"
                 android:title="Share" />
             <item
-                android:id="@+id/nav_send"
-                android:icon="@drawable/ic_menu_send"
-                android:title="Dev Website" />
+                android:id="@+id/nav_report"
+                android:icon="@drawable/ic_error_outline_black_24dp"
+                android:title="Report Issue" />
         </menu>
     </item>
 

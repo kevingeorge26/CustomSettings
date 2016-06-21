@@ -2,8 +2,10 @@ package bunk.com.customsettings.AdvancedWifi;
 
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
+import android.content.Context;
 import android.content.Intent;
 import android.support.design.widget.Snackbar;
+import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -23,9 +25,13 @@ import android.widget.RadioGroup;
 import android.widget.Spinner;
 import android.widget.Switch;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import java.util.ArrayList;
+
+import bunk.com.customsettings.Helpers.Utils;
 import bunk.com.customsettings.R;
+import bunk.com.customsettings.wifi.WifiStateReceiver;
 
 public class WifiDetailsActivity extends AppCompatActivity {
 
@@ -37,6 +43,7 @@ public class WifiDetailsActivity extends AppCompatActivity {
     Spinner mWifiSpinner;
 
     View mRootView;
+    Context mContext;
     LinearLayout mSoundOptions, mBluetoothOptions, mLockOptions;
     boolean isEdited = false;
 
@@ -54,11 +61,27 @@ public class WifiDetailsActivity extends AppCompatActivity {
         if (id == R.id.save_settings) {
             mWifiDetails.wifiName = mWifiSpinner.getSelectedItem().toString();
             WifiDetailsModel.addOrUpdateWifi(mWifiDetails, mDBHelper.getWritableDatabase());
+            Toast toast =Toast.makeText(getApplicationContext(), "Settings Saved", Toast.LENGTH_SHORT);
+            toast.show();
+
+            String currentWifi = Utils.getCurrentWifiName(mContext);
+            if (currentWifi != null && currentWifi.equals(mWifiDetails.wifiName)) {
+                Utils.changeNotificationSettings(mContext, mWifiDetails.soundProfileStatus);
+                Utils.changeBluetoothSettings(mContext, mWifiDetails.bluetoothStatus);
+            }
+
             isEdited = false;
             return true;
         } else if (id == android.R.id.home) {
             onBackPressed();
             return true;
+        } else if (id == R.id.delete_settings) {
+            String wifiName = mWifiSpinner.getSelectedItem().toString();
+            WifiDetailsModel.deleteWifi(wifiName, mDBHelper.getWritableDatabase());
+            Toast toast =Toast.makeText(getApplicationContext(), "Settings Deleted", Toast.LENGTH_SHORT);
+            toast.show();
+            isEdited = false;
+            onBackPressed();
         }
 
         return super.onOptionsItemSelected(item);
@@ -79,6 +102,7 @@ public class WifiDetailsActivity extends AppCompatActivity {
         setContentView(R.layout.activity_wifi_details);
         mRootView = findViewById(R.id.root_view);
         mDBHelper = new DBHelper(this);
+        mContext = getBaseContext();
 
         ActionBar actionBar = getSupportActionBar();
         actionBar.setTitle("Add");

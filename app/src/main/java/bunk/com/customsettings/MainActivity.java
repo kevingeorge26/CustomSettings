@@ -1,6 +1,7 @@
 package bunk.com.customsettings;
 
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
@@ -17,6 +18,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 
 import bunk.com.customsettings.AdvancedWifi.AdvancedWifiFragment;
+import bunk.com.customsettings.Default.DefaultSettingsFragment;
 import bunk.com.customsettings.wifi.WifiFragment;
 
 public class MainActivity extends AppCompatActivity
@@ -57,27 +59,6 @@ public class MainActivity extends AppCompatActivity
         }
     }
 
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.main, menu);
-        return true;
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
-        int id = item.getItemId();
-
-        //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
-            return true;
-        }
-
-        return super.onOptionsItemSelected(item);
-    }
 
     @Override
     public boolean onNavigationItemSelected(MenuItem item) {
@@ -86,10 +67,10 @@ public class MainActivity extends AppCompatActivity
         Fragment fragment = null;
         int id = item.getItemId();
 
-        if (id == R.id.nav_wifi) {
-            fragment = WifiFragment.newInstance();
-            getSupportActionBar().setTitle(R.string.wifi_sound_settings);
-        } else if (id == R.id.nav_general) {
+        if (id == R.id.nav_default_wifi) {
+            fragment = DefaultSettingsFragment.newInstance();
+            getSupportActionBar().setTitle("Default Settings");
+        } else if (id == R.id.nav_advanced_wifi) {
             fragment = AdvancedWifiFragment.newInstance();
             getSupportActionBar().setTitle("ADV");
         } else if (id == R.id.nav_share) {
@@ -99,7 +80,9 @@ public class MainActivity extends AppCompatActivity
             sharingIntent.putExtra(android.content.Intent.EXTRA_SUBJECT, "");
             sharingIntent.putExtra(android.content.Intent.EXTRA_TEXT, shareBody);
             startActivity(Intent.createChooser(sharingIntent, "Share via"));
-
+        } else if (id == R.id.nav_report) {
+            Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse("https://github.com/kevingeorge26/CustomSettings/issues"));
+            startActivity(browserIntent);
         }
 
         if (fragment != null) {
