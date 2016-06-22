@@ -2,6 +2,7 @@ package bunk.com.customsettings.AdvancedWifi;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
@@ -59,12 +60,6 @@ public class AdvancedWifiFragment extends Fragment implements ConfiguredWifiAdap
         mView =  inflater.inflate(R.layout.fragment_advanced_wifi, container, false);
         activity = getActivity();
 
-        mAvailableWifi = Utils.getAvailableWifi(activity);
-        if (mAvailableWifi == null) {
-            Snackbar snackbar = Snackbar.make(mView, "Please enable wifi to Edit settings", Snackbar.LENGTH_INDEFINITE);
-            snackbar.show();
-        }
-
         mDbHelper = new DBHelper(activity);
         mConfiguredWifi =  WifiDetailsModel.getAllConfiguredWifi(mDbHelper.getReadableDatabase());
 
@@ -82,9 +77,17 @@ public class AdvancedWifiFragment extends Fragment implements ConfiguredWifiAdap
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(activity, WifiDetailsActivity.class);
-                intent.putStringArrayListExtra(WifiDetailsActivity.WIFI_AVAILABILITY_ARG, (ArrayList<String>) mAvailableWifi);
-                startActivity(intent);
+                mAvailableWifi = Utils.getAvailableWifi(activity);
+                if (mAvailableWifi == null) {
+                    Snackbar snackbar = Snackbar.make(mView, "Please enable Wi-Fi first", Snackbar.LENGTH_LONG);
+                    snackbar.setActionTextColor(Color.RED);
+                    snackbar.show();
+                } else {
+                    Intent intent = new Intent(activity, WifiDetailsActivity.class);
+                    intent.putStringArrayListExtra(WifiDetailsActivity.WIFI_AVAILABILITY_ARG, (ArrayList<String>) mAvailableWifi);
+                    startActivity(intent);
+                }
+
             }
         });
 
